@@ -64,7 +64,7 @@ Renamed
 Methods for adding form parameters to the request have been renamed:
 
 * ``param`` => ``formParam``
-* ``multiValuedParam`` => ``multiValuedFormParam``
+* ``multiValuedParam`` => ``multivaluedFormParam``
 
 Misc
 ----
