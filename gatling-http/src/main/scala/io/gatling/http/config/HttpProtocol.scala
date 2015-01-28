@@ -18,25 +18,24 @@ package io.gatling.http.config
 import java.net.InetAddress
 import java.util.regex.Pattern
 
-import scala.collection.mutable
-
 import com.ning.http.client._
 import com.ning.http.client.providers.netty.NettyAsyncHttpProvider
 import com.ning.http.client.providers.netty.channel.pool.ChannelPoolPartitionSelector
 import com.typesafe.scalalogging.StrictLogging
-
 import io.gatling.core.akka.GatlingActorSystem
 import io.gatling.core.config.GatlingConfiguration.configuration
 import io.gatling.core.config.Protocol
 import io.gatling.core.filter.Filters
-import io.gatling.core.session.{ Session, Expression, ExpressionWrapper }
+import io.gatling.core.session.{ Expression, ExpressionWrapper, Session }
 import io.gatling.core.util.RoundRobin
 import io.gatling.http.HeaderNames._
-import io.gatling.http.ahc.{ ChannelPoolPartitioning, AsyncHandlerActor, HttpEngine }
+import io.gatling.http.ahc.{ AsyncHandlerActor, ChannelPoolPartitioning, HttpEngine }
 import io.gatling.http.check.HttpCheck
 import io.gatling.http.request.ExtraInfoExtractor
 import io.gatling.http.request.builder.Http
 import io.gatling.http.response.Response
+
+import scala.collection.mutable
 
 /**
  * HttpProtocol class companion
@@ -113,7 +112,7 @@ case class HttpProtocol(
     wsPart: HttpProtocolWsPart,
     proxyPart: HttpProtocolProxyPart) extends Protocol with StrictLogging {
 
-  import HttpProtocol._
+  import io.gatling.http.config.HttpProtocol._
 
   private val baseURLF = nextBaseUrlF(baseURLs)
   def baseURL: Option[String] = baseURLF()
@@ -213,7 +212,7 @@ case class HttpProtocolWsPart(
     reconnect: Boolean,
     maxReconnects: Option[Int]) {
 
-  import HttpProtocol._
+  import io.gatling.http.config.HttpProtocol._
 
   private val wsBaseURLF = nextBaseUrlF(wsBaseURLs)
   def wsBaseURL: Option[String] = wsBaseURLF()

@@ -15,13 +15,13 @@
  */
 package io.gatling.http.util
 
-import java.io.{ FileNotFoundException, InputStream, File, FileInputStream }
+import java.io.{ File, FileInputStream, FileNotFoundException, InputStream }
 import java.security.{ KeyStore, SecureRandom }
+import javax.net.ssl._
 
 import com.ning.http.client.AsyncHttpClientConfig
-
 import io.gatling.core.util.Io._
-import javax.net.ssl.{ KeyManager, KeyManagerFactory, SSLContext, TrustManager, TrustManagerFactory }
+import io.gatling.http.ssl.{ GatlingKeyManager, GatlingKeystore }
 
 object SslHelper {
 
@@ -48,13 +48,12 @@ object SslHelper {
   def newKeyManagers(storeType: Option[String], file: String, password: String, algorithm: Option[String]): Array[KeyManager] = {
 
     withCloseable(storeStream(file)) { is =>
-      val keyStore = KeyStore.getInstance(storeType.getOrElse(KeyStore.getDefaultType))
-      val passwordCharArray = password.toCharArray
-      keyStore.load(is, passwordCharArray)
+      val charPassword = password.toCharArray
+      val keyStore = GatlingKeystore.getLoadedInstance(is, charPassword, storeType.getOrElse(KeyStore.getDefaultType))
       val algo = algorithm.getOrElse(KeyManagerFactory.getDefaultAlgorithm)
       val kmf = KeyManagerFactory.getInstance(algo)
-      kmf.init(keyStore, passwordCharArray)
-      kmf.getKeyManagers
+      kmf.init(null, charPassword)
+      kmf.getKeyManagers.map(km => new GatlingKeyManager(km.asInstanceOf[X509KeyManager], keyStore))
     }
   }
 
