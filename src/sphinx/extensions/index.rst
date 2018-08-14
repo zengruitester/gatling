@@ -13,6 +13,8 @@ Official Extensions
     maven_archetype
     jenkins_plugin
     vtd_xml
+    bamboo_plugin
+    teamcity_plugin
 
 Third Parties
 =============
