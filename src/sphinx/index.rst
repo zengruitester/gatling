@@ -23,6 +23,8 @@ Gatling FrontLine
 
 .. image:: img/frontline-logo.png
    :alt: FrontLine
+   :align: center
+
 
 Migrating from a Previous Version of Gatling
 ============================================
