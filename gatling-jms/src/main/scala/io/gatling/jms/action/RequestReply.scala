@@ -90,7 +90,7 @@ class RequestReply(
             val updatedMatchId = messageMatcher.requestMatchId(message)
 
             if (updatedMatchId != null) {
-              tracker.track(matchId, clock.nowMillis, replyTimeout, attributes.checks, session, next, requestName)
+              tracker.track(updatedMatchId, clock.nowMillis, replyTimeout, attributes.checks, session, next, requestName)
             } else {
               val now = clock.nowMillis
               statsEngine.logResponse(session, requestName, now, now, KO, None, Some("Failed to get a matchId to track"))
