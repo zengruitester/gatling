@@ -21,18 +21,18 @@ object Dependencies {
   private val nettyHttp2                     = netty.organization                     % "netty-codec-http2"               % netty.revision
   private val nettyBoringSsl                 = netty.organization                     % "netty-tcnative-boringssl-static" % "2.0.26.Final"
   private val activation                     = "com.sun.activation"                   % "javax.activation"                % "1.2.0"
-  private val akka                           = "com.typesafe.akka"                   %% "akka-actor"                      % "2.5.26"
+  private val akka                           = "com.typesafe.akka"                   %% "akka-actor"                      % "2.6.0"
   private val akkaSlf4j                      = akka.organization                     %% "akka-slf4j"                      % akka.revision
   private val config                         = "com.typesafe"                         % "config"                          % "1.4.0"
   private val saxon                          = "net.sf.saxon"                         % "Saxon-HE"                        % "9.9.1-5"
-  private val slf4jApi                       = "org.slf4j"                            % "slf4j-api"                       % "1.7.28"
+  private val slf4jApi                       = "org.slf4j"                            % "slf4j-api"                       % "1.7.29"
   private val spire                          = ("org.typelevel"                      %% "spire-macros"                    % "0.16.2")
     .exclude("org.typelevel", "machinist_2.12")
     .exclude("org.typelevel", "algebra_2.12")
   private val scopt                          = "com.github.scopt"                    %% "scopt"                           % "3.7.1"
   private val scalaLogging                   = "com.typesafe.scala-logging"          %% "scala-logging"                   % "3.9.2"
   private val jackson                        = "com.fasterxml.jackson.core"           % "jackson-databind"                % "2.10.0"
-  private val sfm                            = ("org.simpleflatmapper"                % "lightning-csv"                   % "8.0.3")
+  private val sfm                            = ("org.simpleflatmapper"                % "lightning-csv"                   % "8.1.1")
     .exclude("org.simpleflatmapper", "ow2-asm")
   private val json4sJackson                  = "org.json4s"                          %% "json4s-jackson"                  % "3.6.7"
   private val jsonpath                       = "io.gatling"                          %% "jsonpath"                        % "0.7.0"
@@ -72,7 +72,7 @@ object Dependencies {
   private val activemqBroker                 = ("org.apache.activemq"                 % "activemq-broker"                 % "5.15.10"           % "test")
     .exclude("org.apache.geronimo.specs", "geronimo-jms_1.1_spec")
   private val h2                             = "com.h2database"                       % "h2"                              % "1.4.199"           % "test"
-  private val jmh                            = "org.openjdk.jmh"                      % "jmh-core"                        % "1.21"
+  private val jmh                            = "org.openjdk.jmh"                      % "jmh-core"                        % "1.22"
 
   private val junit                          = "org.junit.jupiter"                    % "junit-jupiter-api"               % "5.5.2"             % "test"
   private val jetty                          = "org.eclipse.jetty"                    % "jetty-server"                    % "9.4.22.v20191022"  % "test"
