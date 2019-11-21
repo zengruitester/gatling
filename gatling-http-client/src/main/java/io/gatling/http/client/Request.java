@@ -108,6 +108,25 @@ public class Request {
   public Uri getUri() {
     return uri;
   }
+  public Request setUri(Uri uri){
+    return new Request(
+            this.method,
+            uri,
+            this.headers,
+            this.cookies,
+            this.body,
+            this.requestTimeout,
+            this.virtualHost,
+            this.localAddress,
+            this.realm,
+            this.proxyServer,
+            this.signatureCalculator,
+            this.nameResolver,
+            this.http2Enabled,
+            this.alpnRequired,
+            this.http2PriorKnowledge,
+            this.wsSubprotocol);
+  }
 
   public HttpHeaders getHeaders() {
     return headers;
