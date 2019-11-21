@@ -70,7 +70,7 @@ private[gatling] class GraphiteDataWriter(clock: Clock, configuration: GatlingCo
     // Reset all metrics
     requestsByPath.foreach { case (_, buff) => buff.clear() }
 
-    sendMetricsToGraphite(data, clock.nowSeconds, requestsMetrics, usersBreakdowns)
+    sendMetricsToGraphite(data, clock.nowSeconds, requestsMetrics, usersBreakdowns, configuration)
   }
 
   private def onUserMessage(scenario: String, isStart: Boolean, data: GraphiteData): Unit = {
@@ -107,10 +107,11 @@ private[gatling] class GraphiteDataWriter(clock: Clock, configuration: GatlingCo
       data: GraphiteData,
       epoch: Long,
       requestsMetrics: Map[GraphitePath, MetricByStatus],
-      userBreakdowns: Map[GraphitePath, UserBreakdown]
+      userBreakdowns: Map[GraphitePath, UserBreakdown],
+      configuration: GatlingConfiguration
   ): Unit = {
 
     import data._
-    metricsSender ! GraphiteMetrics(format.metrics(userBreakdowns, requestsMetrics), epoch)
+    metricsSender ! GraphiteMetrics(format.metrics(userBreakdowns, requestsMetrics), epoch, configuration)
   }
 }

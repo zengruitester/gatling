@@ -19,20 +19,20 @@ package io.gatling.graphite.message
 import java.nio.charset.StandardCharsets.UTF_8
 
 import io.gatling.netty.util.StringBuilderPool
-
 import akka.util.ByteString
 import com.typesafe.scalalogging.StrictLogging
+import io.gatling.core.config.GatlingConfiguration
 
 private[graphite] final case class GraphiteMetrics(byteString: ByteString)
 
 private[graphite] object GraphiteMetrics extends StrictLogging {
 
-  def apply(pathValuePairs: Iterator[(String, Long)], epoch: Long): GraphiteMetrics = {
+  def apply(pathValuePairs: Iterator[(String, Long)], epoch: Long, configuration: GatlingConfiguration): GraphiteMetrics = {
 
     val sb = StringBuilderPool.DEFAULT.get()
     pathValuePairs.foreach {
       case (path, value) =>
-        sb.append(path).append(' ').append(value).append(' ').append(epoch).append('\n')
+        sb.append(path).append('.').append(configuration.data.graphite.tags).append(' ').append(value).append(' ').append(epoch).append('\n')
     }
     logger.debug(s"GraphiteMetrics=${sb.toString}")
     GraphiteMetrics(ByteString(sb.toString, UTF_8.name))
