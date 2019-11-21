@@ -65,4 +65,9 @@ private[gatling] class ReportsGenerator(implicit configuration: GatlingConfigura
 
     globalFile(reportFolderName)
   }
+  def generateForStats(reportsGenerationInputs: ReportsGenerationInputs): String = {
+    val generateStats = new StatsReportGenerator(reportsGenerationInputs, ComponentLibrary.Instance)
+    generateStats.generate()
+    generateStats.globalInformation
+  }
 }

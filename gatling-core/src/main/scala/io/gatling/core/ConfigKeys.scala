@@ -147,6 +147,7 @@ object ConfigKeys {
       val RootPathPrefix = "gatling.data.graphite.rootPathPrefix"
       val BufferSize = "gatling.data.graphite.bufferSize"
       val WritePeriod = "gatling.data.graphite.writePeriod"
+      val Tags = "gatling.data.graphite.address"
     }
   }
 

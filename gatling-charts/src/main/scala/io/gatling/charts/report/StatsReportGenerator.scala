@@ -32,6 +32,7 @@ private[charts] class StatsReportGenerator(reportsGenerationInputs: ReportsGener
 ) extends StrictLogging {
 
   import reportsGenerationInputs._
+  var globalInformation: String = ""
 
   def generate(): Unit = {
 
@@ -181,6 +182,7 @@ private[charts] class StatsReportGenerator(reportsGenerationInputs: ReportsGener
     new TemplateWriter(statsJsFile(reportFolderName)).writeToFile(new StatsJsTemplate(rootContainer, false).getOutput(configuration.core.charset))
     new TemplateWriter(statsJsonFile(reportFolderName)).writeToFile(new StatsJsTemplate(rootContainer, true).getOutput(configuration.core.charset))
     new TemplateWriter(globalStatsJsonFile(reportFolderName)).writeToFile(new GlobalStatsJsonTemplate(rootContainer.stats, true).getOutput)
-    println(ConsoleTemplate.println(rootContainer.stats, logFileReader.errors(None, None)))
+    globalInformation = ConsoleTemplate.println(rootContainer.stats, logFileReader.errors(None, None))
+    println(globalInformation)
   }
 }
