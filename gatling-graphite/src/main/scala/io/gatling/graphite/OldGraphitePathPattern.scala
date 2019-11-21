@@ -33,7 +33,7 @@ class OldGraphitePathPattern(runMessage: RunMessage, configuration: GatlingConfi
   private val percentiles3Name = "percentiles" + removeDecimalPart(configuration.charting.indicators.percentile3)
   private val percentiles4Name = "percentiles" + removeDecimalPart(configuration.charting.indicators.percentile4)
 
-  val metricRootPath = GraphitePath.graphitePath(configuration.data.graphite.rootPathPrefix) / runMessage.simulationId
+  val metricRootPath = GraphitePath.graphitePath(configuration.data.graphite.rootPathPrefix) / runMessage.runId
 
   val allUsersPath = usersRootKey / "allUsers"
 
