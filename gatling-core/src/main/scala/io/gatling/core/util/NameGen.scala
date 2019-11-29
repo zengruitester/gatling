@@ -19,11 +19,11 @@ package io.gatling.core.util
 import java.util.concurrent.atomic.AtomicLong
 
 object NameGen {
-  val IdGen = new AtomicLong
+  private val IdGen = new AtomicLong
 }
 
 trait NameGen {
   import NameGen._
 
-  def genName(base: String): String = base + "-" + IdGen.incrementAndGet
+  def genName(base: String): String = s"$base-${IdGen.incrementAndGet}"
 }

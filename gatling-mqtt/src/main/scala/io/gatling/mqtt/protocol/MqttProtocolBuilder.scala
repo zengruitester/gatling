@@ -27,7 +27,7 @@ import io.gatling.mqtt.check.MessageCorrelator
 import io.netty.handler.codec.mqtt.{ MqttQoS, MqttVersion }
 import com.softwaremill.quicklens._
 
-case class MqttProtocolBuilder(mqttProtocol: MqttProtocol) {
+final case class MqttProtocolBuilder(mqttProtocol: MqttProtocol) {
 
   def mqttVersion_3_1: MqttProtocolBuilder =
     this.modify(_.mqttProtocol.version).setTo(MqttVersion.MQTT_3_1)
@@ -103,5 +103,5 @@ object MqttProtocolBuilder {
 
   implicit def toMqttProtocol(builder: MqttProtocolBuilder): MqttProtocol = builder.build
 
-  val Default = MqttProtocolBuilder(MqttProtocol.Default)
+  val Default: MqttProtocolBuilder = MqttProtocolBuilder(MqttProtocol.Default)
 }

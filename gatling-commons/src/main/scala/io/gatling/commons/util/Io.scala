@@ -23,7 +23,6 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.{ FileVisitResult, Files, Path, SimpleFileVisitor }
 
 import scala.io.Source
-import scala.util.Try
 import scala.util.control.NonFatal
 
 object Io {
@@ -32,11 +31,17 @@ object Io {
 
   implicit class RichURL(val url: URL) extends AnyVal {
 
-    def file: File = Try(new File(url.toURI)).recover { case _: URISyntaxException => new File(url.getPath) }.get
+    def file: File =
+      try {
+        new File(url.toURI)
+      } catch {
+        case _: URISyntaxException => new File(url.getPath)
+      }
   }
 
   implicit class RichInputStream(val is: InputStream) extends AnyVal {
 
+    @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
     def toString(charset: Charset, bufferSize: Int = DefaultBufferSize): String = {
       val writer = new FastStringWriter(bufferSize)
       val reader = new InputStreamReader(is, charset)
@@ -52,6 +57,7 @@ object Io {
       os.toByteArray
     }
 
+    @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
     def copyTo(os: OutputStream, bufferSize: Int = DefaultBufferSize): Int = {
 
       def copyLarge(buffer: Array[Byte]): Long = {
@@ -81,6 +87,7 @@ object Io {
 
   implicit class RichReader(val reader: Reader) extends AnyVal {
 
+    @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
     def copyTo(writer: Writer, bufferSize: Int = DefaultBufferSize): Int = {
 
       def copyLarge(buffer: Array[Char]) = {

@@ -33,7 +33,7 @@ import org.mockito.Mockito._
 
 class HttpTxSpec extends BaseSpec {
 
-  implicit val configuration = GatlingConfiguration.loadForTest()
+  private implicit val configuration: GatlingConfiguration = GatlingConfiguration.loadForTest()
 
   trait Context {
     val coreComponents = CoreComponents(null, null, null, null, new DefaultClock, null, configuration)
@@ -52,7 +52,7 @@ class HttpTxSpec extends BaseSpec {
     )
   }
 
-  def tx(clientRequest: Request, requestConfig: HttpRequestConfig, root: Boolean) =
+  private def tx(clientRequest: Request, requestConfig: HttpRequestConfig, root: Boolean) =
     HttpTx(
       null,
       request = HttpRequest(
@@ -62,7 +62,8 @@ class HttpTxSpec extends BaseSpec {
       ),
       responseBuilderFactory = null,
       next = mock[Action],
-      resourceTx = if (root) None else Some(ResourceTx(null, null))
+      resourceTx = if (root) None else Some(ResourceTx(null, null)),
+      redirectCount = 0
     )
 
   "HttpTx" should "be silent when using default protocol and containing a request forced to silent" in new Context {

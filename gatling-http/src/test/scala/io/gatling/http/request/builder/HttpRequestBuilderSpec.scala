@@ -39,12 +39,12 @@ class HttpRequestBuilderSpec extends BaseSpec with ValidationValues {
   // Default config
   private val configuration = GatlingConfiguration.loadForTest()
   private val clock = new DefaultClock
-  val coreComponents = CoreComponents(mock[ActorSystem], null, null, null, clock, null, configuration)
+  private val coreComponents = CoreComponents(mock[ActorSystem], null, null, null, clock, null, configuration)
   private val httpCaches = new HttpCaches(coreComponents)
 
   private def httpRequestDef(f: HttpRequestBuilder => HttpRequestBuilder) = {
     val commonAttributes = CommonAttributes("requestName".expressionSuccess, HttpMethod.GET, Right(Uri.create("http://gatling.io")))
-    val builder = f(new HttpRequestBuilder(commonAttributes, HttpAttributes()))
+    val builder = f(new HttpRequestBuilder(commonAttributes, HttpAttributes.Empty))
     builder.build(httpCaches, HttpProtocol(configuration), throttled = false, configuration)
   }
 

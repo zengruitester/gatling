@@ -19,10 +19,10 @@ package io.gatling.http.action.sse.fsm
 import io.gatling.core.json.Json
 
 final case class ServerSentEvent(
-    name: Option[String] = None,
-    data: Option[String] = None,
-    id: Option[String] = None,
-    retry: Option[Int] = None
+    name: Option[String],
+    data: Option[String],
+    id: Option[String],
+    retry: Option[Int]
 ) {
 
   def asJsonString: String = {
@@ -31,6 +31,6 @@ final case class ServerSentEvent(
     val map = Map("event" -> name, "id" -> id, "data" -> data, "retry" -> retry)
       .collect({ case (key, Some(value)) => (key, value) })
 
-    Json.stringify(map)
+    Json.stringify(map, isRootObject = true)
   }
 }

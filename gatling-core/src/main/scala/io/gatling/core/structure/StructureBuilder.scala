@@ -22,7 +22,7 @@ import io.gatling.core.controller.inject.InjectionProfileFactory
 /**
  * This trait defines most of the scenario related DSL
  */
-sealed trait StructureBuilder[B <: StructureBuilder[B]]
+trait StructureBuilder[B <: StructureBuilder[B]]
     extends Execs[B]
     with Pauses[B]
     with Feeds[B]
@@ -48,7 +48,7 @@ final case class ChainBuilder(actionBuilders: List[ActionBuilder]) extends Struc
  * @param name the name of the scenario
  * @param actionBuilders the list of all the actions that compose the scenario
  */
-final case class ScenarioBuilder(name: String, actionBuilders: List[ActionBuilder] = Nil) extends StructureBuilder[ScenarioBuilder] with BuildAction {
+final case class ScenarioBuilder(name: String, actionBuilders: List[ActionBuilder]) extends StructureBuilder[ScenarioBuilder] with BuildAction {
 
   override protected def chain(newActionBuilders: Seq[ActionBuilder]): ScenarioBuilder =
     copy(actionBuilders = newActionBuilders.toList ::: actionBuilders)
@@ -57,11 +57,18 @@ final case class ScenarioBuilder(name: String, actionBuilders: List[ActionBuilde
 
   def inject[T: InjectionProfileFactory](iss: Iterable[T]): PopulationBuilder = {
     require(iss.nonEmpty, "Calling inject with empty injection steps")
-    PopulationBuilder(this, implicitly[InjectionProfileFactory[T]].profile(iss))
+    PopulationBuilder(
+      scenarioBuilder = this,
+      injectionProfile = implicitly[InjectionProfileFactory[T]].profile(iss),
+      scenarioProtocols = Map.empty,
+      scenarioThrottleSteps = Nil,
+      pauseType = None,
+      children = Nil
+    )
   }
 }
 
-private[gatling] trait StructureSupport extends StructureBuilder[ChainBuilder] {
+trait StructureSupport extends StructureBuilder[ChainBuilder] {
 
   override protected def actionBuilders: List[ActionBuilder] = Nil
 

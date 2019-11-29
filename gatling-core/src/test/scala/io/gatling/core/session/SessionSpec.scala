@@ -25,7 +25,7 @@ class SessionSpec extends BaseSpec {
 
   private val nextAction = mock[Action]
 
-  def newSession = Session("scenario", 0, System.currentTimeMillis())
+  private def newSession = Session("scenario", 0, System.currentTimeMillis())
 
   "setAll" should "set all give key/values pairs in session" in {
     val session = newSession.setAll("key" -> 1, "otherKey" -> 2)
@@ -134,14 +134,8 @@ class SessionSpec extends BaseSpec {
 
   "exitGroup" should "remove the GroupBlock from the stack if it's on top of the stack" in {
     val session = newSession.enterGroup("root group", System.currentTimeMillis())
-    val sessionWithoutGroup = session.exitGroup
+    val sessionWithoutGroup = session.exitGroup(session.blockStack.tail)
     sessionWithoutGroup.blockStack shouldBe empty
-  }
-
-  it should "leave the stack unmodified if there's no GroupBlock on top of the stack" in {
-    val session = newSession
-    val unModifiedSession = session.exitGroup
-    session should be theSameInstanceAs unModifiedSession
   }
 
   "logGroupRequestTimings" should "update stats in all parent groups" in {
@@ -236,7 +230,7 @@ class SessionSpec extends BaseSpec {
   }
 
   it should "return true if baseStatus is OK and there is a failed TryMaxBlock in the stack" in {
-    val session = newSession.copy(blockStack = List(TryMaxBlock("tryMax", nextAction, status = KO)))
+    val session = newSession.copy(blockStack = List(TryMaxBlock("tryMax", nextAction, KO)))
 
     session.isFailed shouldBe true
   }
@@ -246,7 +240,7 @@ class SessionSpec extends BaseSpec {
   }
 
   it should "return false if baseStatus is OK and there is no failed TryMaxBlock in the stack" in {
-    val session = newSession.copy(blockStack = List(TryMaxBlock("tryMax", nextAction)))
+    val session = newSession.copy(blockStack = List(TryMaxBlock("tryMax", nextAction, OK)))
 
     session.isFailed shouldBe false
   }

@@ -57,7 +57,8 @@ object StringHelper {
 
     def truncate(maxLength: Int): String = if (string.length <= maxLength) string else string.substring(0, maxLength) + "..."
 
-    def leftPad(length: Int, padder: String = " "): String = {
+    def leftPad(length: Int): String = leftPad(length, " ")
+    def leftPad(length: Int, padder: String): String = {
       val paddingLength = length - string.length
       if (paddingLength > 0)
         padder * paddingLength + string
@@ -65,7 +66,8 @@ object StringHelper {
         string
     }
 
-    def rightPad(length: Int, padder: String = " "): String = {
+    def rightPad(length: Int): String = rightPad(length, " ")
+    def rightPad(length: Int, padder: String): String = {
       val paddingLength = length - string.length
       if (paddingLength > 0)
         string + padder * paddingLength
@@ -98,9 +100,9 @@ object StringHelper {
         var i = fromIndex
         val first = target(0)
         val max = sourceCount - targetCount
-
-        while (i <= max) {
-          // Look for first character
+        var exit = false
+        while (i <= max && !exit) {
+          // look for first character
           if (source.charAt(i) != first) {
             i += 1
             while (i <= max && source.charAt(i) != first) {
@@ -108,7 +110,7 @@ object StringHelper {
             }
           }
 
-          // Found first character, now look at the rest of v2
+          // found first character, now look at the rest of target
           if (i <= max) {
             var j = i + 1
             val end = j + targetCount - 1
@@ -120,14 +122,16 @@ object StringHelper {
             }
 
             if (j == end) {
-              // Found whole string
-              return i
+              // found whole string
+              exit = true
             }
           }
 
-          i += 1
+          if (!exit) {
+            i += 1
+          }
         }
-        -1
+        if (exit) i else -1
       }
     }
   }

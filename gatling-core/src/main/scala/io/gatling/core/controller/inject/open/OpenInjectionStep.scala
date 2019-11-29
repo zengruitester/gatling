@@ -24,7 +24,7 @@ import scala.math.abs
 
 import io.gatling.core.util.Shard
 
-sealed trait OpenInjectionStep {
+sealed trait OpenInjectionStep extends Product with Serializable {
 
   /**
    * Iterator of time deltas in between any injected user and the beginning of the simulation
@@ -47,12 +47,13 @@ abstract class InjectionIterator(durationInSeconds: Int) extends AbstractIterato
 
   // only called if !finished
   private def finishedAfterMovingToNextBatch(): Boolean = {
+    var result: Option[Boolean] = None
     do {
       thisSecond += 1
 
       if (thisSecond == durationInSeconds) {
         thisSecondIterator = Iterator.empty
-        return true
+        result = Some(true)
 
       } else {
         val users = thisSecondUsers(thisSecond)
@@ -68,11 +69,11 @@ abstract class InjectionIterator(durationInSeconds: Int) extends AbstractIterato
                 else
                   Iterator.empty
             }
-          return false
+          result = Some(false)
         }
       }
-    } while (!thisSecondIterator.hasNext)
-    true
+    } while (!thisSecondIterator.hasNext && result.isEmpty)
+    result.getOrElse(true)
   }
 
   override def hasNext(): Boolean =
@@ -125,7 +126,7 @@ final case class ConstantRateOpenInjection(rate: Double, duration: FiniteDuratio
 
   override private[inject] val users: Long = (duration.toSeconds * rate).round
 
-  def randomized = PoissonOpenInjection(duration, rate, rate)
+  def randomized: OpenInjectionStep = PoissonOpenInjection(duration, rate, rate)
 
   override private[inject] def chain(chained: Iterator[FiniteDuration]): Iterator[FiniteDuration] =
     if (rate == 0) {
@@ -191,7 +192,7 @@ final case class RampRateOpenInjection(startRate: Double, endRate: Double, durat
 
   override private[inject] val users: Long = ((startRate + (endRate - startRate) / 2) * duration.toSeconds).toLong
 
-  def randomized = PoissonOpenInjection(duration, startRate, endRate)
+  def randomized: OpenInjectionStep = PoissonOpenInjection(duration, startRate, endRate)
 
   override private[inject] def chain(chained: Iterator[FiniteDuration]): Iterator[FiniteDuration] =
     if (startRate == 0 && endRate == 0) {
@@ -263,6 +264,11 @@ final case class HeavisideOpenInjection(private[inject] val users: Long, duratio
     }
 }
 
+object PoissonOpenInjection {
+  def apply(duration: FiniteDuration, startRate: Double, endRate: Double): PoissonOpenInjection =
+    new PoissonOpenInjection(duration, startRate, endRate, System.nanoTime)
+}
+
 /**
  * Inject users following a Poisson random process, with a ramped injection rate.
  *
@@ -277,7 +283,7 @@ final case class HeavisideOpenInjection(private[inject] val users: Long, duratio
  * @param endRate final injection rate for users
  * @param seed a seed for the randomization. If the same seed is re-used, the same timings will be obtained
  */
-final case class PoissonOpenInjection(duration: FiniteDuration, startRate: Double, endRate: Double, seed: Long = System.nanoTime) extends OpenInjectionStep {
+final case class PoissonOpenInjection(duration: FiniteDuration, startRate: Double, endRate: Double, seed: Long) extends OpenInjectionStep {
 
   require(startRate >= 0.0 && endRate >= 0.0, s"injection rates ($startRate, $endRate) must be >= 0")
   require(duration >= Duration.Zero, s"duration ($duration) must be > 0")

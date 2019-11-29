@@ -25,23 +25,9 @@ import io.gatling.http.cookie.CookieSupport.storeCookie
 
 import io.netty.handler.codec.http.cookie.{ Cookie, DefaultCookie }
 
-final case class AddCookieDsl(
-    name: String,
-    value: Expression[String],
-    domain: Option[String] = None,
-    path: Option[String] = None,
-    maxAge: Option[Long] = None,
-    secure: Boolean = false
-) {
-  def withDomain(domain: String): AddCookieDsl = copy(domain = Some(domain))
-  def withPath(path: String): AddCookieDsl = copy(path = Some(path))
-  def withMaxAge(maxAge: Int): AddCookieDsl = copy(maxAge = Some(maxAge))
-  def withSecure(secure: Boolean): AddCookieDsl = copy(secure = secure)
-}
-
 object AddCookieBuilder {
 
-  def apply(cookie: AddCookieDsl) =
+  def apply(cookie: AddCookieDsl): AddCookieBuilder =
     new AddCookieBuilder(cookie.name, cookie.value, cookie.domain, cookie.path, cookie.maxAge.getOrElse(Cookie.UNDEFINED_MAX_AGE), cookie.secure)
 }
 

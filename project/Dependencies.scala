@@ -32,7 +32,7 @@ object Dependencies {
   private val scopt                          = "com.github.scopt"                    %% "scopt"                           % "3.7.1"
   private val scalaLogging                   = "com.typesafe.scala-logging"          %% "scala-logging"                   % "3.9.2"
   private val jackson                        = "com.fasterxml.jackson.core"           % "jackson-databind"                % "2.10.1"
-  private val sfm                            = ("org.simpleflatmapper"                % "lightning-csv"                   % "8.2.0")
+  private val sfm                            = ("org.simpleflatmapper"                % "lightning-csv"                   % "8.2.1")
     .exclude("org.simpleflatmapper", "ow2-asm")
   private val json4sJackson                  = "org.json4s"                          %% "json4s-jackson"                  % "3.6.7"
   private val jsonpath                       = "io.gatling"                          %% "jsonpath"                        % "0.7.0"
@@ -62,20 +62,20 @@ object Dependencies {
   private val bouncyCastle                   = "org.bouncycastle"                     % "bcpkix-jdk15on"                  % "1.64"
   private val quicklens                      = "com.softwaremill.quicklens"          %% "quicklens"                       % "1.4.12"
   private val fastUuid                       = "com.eatthepath"                       % "fast-uuid"                       % "0.1"
-  private val pebble                         = "io.pebbletemplates"                   % "pebble"                          % "3.1.0"
+  private val pebble                         = "io.pebbletemplates"                   % "pebble"                          % "3.1.1"
 
   // Test dependencies
   private val scalaTest                      = "org.scalatest"                       %% "scalatest"                       % "3.0.8"             % "test"
   private val scalaCheck                     = "org.scalacheck"                      %% "scalacheck"                      % "1.14.2"            % "test"
   private val akkaTestKit                    = akka.organization                     %% "akka-testkit"                    % akka.revision       % "test"
   private val mockitoCore                    = "org.mockito"                          % "mockito-core"                    % "3.0.0"             % "test"
-  private val activemqBroker                 = ("org.apache.activemq"                 % "activemq-broker"                 % "5.15.10"           % "test")
+  private val activemqBroker                 = ("org.apache.activemq"                 % "activemq-broker"                 % "5.15.11"           % "test")
     .exclude("org.apache.geronimo.specs", "geronimo-jms_1.1_spec")
   private val h2                             = "com.h2database"                       % "h2"                              % "1.4.199"           % "test"
   private val jmh                            = "org.openjdk.jmh"                      % "jmh-core"                        % "1.22"
 
   private val junit                          = "org.junit.jupiter"                    % "junit-jupiter-api"               % "5.5.2"             % "test"
-  private val jetty                          = "org.eclipse.jetty"                    % "jetty-server"                    % "9.4.22.v20191022"  % "test"
+  private val jetty                          = "org.eclipse.jetty"                    % "jetty-server"                    % "9.4.24.v20191120"  % "test"
   private val jettyProxy                     = jetty.organization                     % "jetty-proxy"                     % jetty.revision      % "test"
 
   // format: ON

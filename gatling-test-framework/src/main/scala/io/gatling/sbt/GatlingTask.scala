@@ -38,7 +38,7 @@ import io.gatling.core.scenario.Simulation
  */
 class GatlingTask(val taskDef: TaskDef, testClassLoader: ClassLoader, args: Array[String], remoteArgs: Array[String]) extends Task {
 
-  val tags = Array.empty[String]
+  override val tags: Array[String] = Array.empty
 
   def execute(eventHandler: EventHandler, loggers: Array[Logger]): Array[Task] = {
     // Load class
@@ -66,8 +66,9 @@ class GatlingTask(val taskDef: TaskDef, testClassLoader: ClassLoader, args: Arra
     val fingerprint = taskDef.fingerprint
 
     // Check return code and fire appropriate event
+    @SuppressWarnings(Array("org.wartremover.warts.Product", "org.wartremover.warts.Serializable"))
+    // problem's in sbt
     val event = returnCode match {
-
       case StatusCode.Success.code =>
         loggers.foreach(_.info(s"Simulation $simulationName successful."))
         SimulationSuccessful(className, fingerprint, selector, optionalThrowable, duration)
@@ -87,5 +88,4 @@ class GatlingTask(val taskDef: TaskDef, testClassLoader: ClassLoader, args: Arra
     // No new task to launch
     Array.empty[Task]
   }
-
 }

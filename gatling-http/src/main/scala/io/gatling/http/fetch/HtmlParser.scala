@@ -130,15 +130,16 @@ class HtmlParser extends StrictLogging {
 
       override def tag(tag: Tag): Unit = {
 
-        def codeBase() = Option(tag.getAttributeValue(CodeBaseAttribute))
+        def codeBase(): Option[CharSequence] = Option(tag.getAttributeValue(CodeBaseAttribute))
 
-        def prependCodeBase(codeBase: CharSequence, url: String) =
-          if (url.startsWith("http"))
+        def prependCodeBase(codeBase: CharSequence, url: String): String =
+          if (url.startsWith("http")) {
             url
-          else if (codeBase.charAt(codeBase.length()) != '/')
-            codeBase + "/" + url
-          else
-            codeBase + url
+          } else if (codeBase.charAt(codeBase.length()) != '/') {
+            s"$codeBase/$url"
+          } else {
+            s"$codeBase$url"
+          }
 
         def processTag(): Unit =
           tag.getType match {
@@ -225,6 +226,6 @@ class HtmlParser extends StrictLogging {
 
     htmlResources.rawResources.distinct
       .filterNot(res => res.rawUrl.isEmpty || res.rawUrl.charAt(0) == '#' || res.rawUrl.startsWith("data:"))
-      .flatMap(_.toEmbeddedResource(rootURI))(breakOut)
+      .flatMap(_.toEmbeddedResource(rootURI).toList)(breakOut)
   }
 }

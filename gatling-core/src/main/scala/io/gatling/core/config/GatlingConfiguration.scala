@@ -53,7 +53,9 @@ object GatlingConfiguration extends StrictLogging {
     configChain(customConfig, defaultsConfig)
   }
 
-  def loadForTest(props: mutable.Map[String, _ <: Any] = mutable.Map.empty): GatlingConfiguration = {
+  def loadForTest(): GatlingConfiguration = loadForTest(mutable.Map.empty)
+
+  def loadForTest(props: mutable.Map[String, _ <: Any]): GatlingConfiguration = {
 
     val defaultsConfig = ConfigFactory.parseResources(getClass.getClassLoader, GatlingDefaultsConfigFile)
     val propertiesConfig = ConfigFactory.parseMap(props.asJava)
@@ -61,12 +63,12 @@ object GatlingConfiguration extends StrictLogging {
     mapToGatlingConfig(config)
   }
 
-  def load(props: mutable.Map[String, _ <: Any] = mutable.Map.empty): GatlingConfiguration = {
+  def load(props: mutable.Map[String, _ <: Any]): GatlingConfiguration = {
     sealed abstract class ObsoleteUsage(val message: String) { def path: String }
     final case class Removed(path: String, advice: String) extends ObsoleteUsage(s"'$path' was removed, $advice.")
     final case class Renamed(path: String, replacement: String) extends ObsoleteUsage(s"'$path' was renamed into $replacement.")
 
-    def loadObsoleteUsagesFromBundle[T <: ObsoleteUsage](bundleName: String, creator: (String, String) => T): Vector[T] = {
+    def loadObsoleteUsagesFromBundle[T <: ObsoleteUsage](bundleName: String, creator: (String, String) => T): Seq[ObsoleteUsage] = {
       val bundle = ResourceBundle.getBundle(bundleName)
       bundle.getKeys.asScala.map(key => creator(key, bundle.getString(key))).toVector
     }
@@ -217,7 +219,7 @@ object GatlingConfiguration extends StrictLogging {
         replyTimeoutScanPeriod = config.getLong(jms.ReplyTimeoutScanPeriod) millis
       ),
       data = DataConfiguration(
-        dataWriters = config.getStringList(data.Writers).asScala.flatMap(DataWriterType.findByName),
+        dataWriters = config.getStringList(data.Writers).asScala.flatMap(DataWriterType.findByName(_).toList),
         console = ConsoleDataWriterConfiguration(
           light = config.getBoolean(data.console.Light),
           writePeriod = config.getInt(data.console.WritePeriod) seconds

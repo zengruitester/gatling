@@ -29,28 +29,28 @@ import io.gatling.commons.model.Credentials
  */
 case object JmsProtocolBuilderBase {
 
-  def connectionFactory(cf: ConnectionFactory) = JmsProtocolBuilder(cf)
+  def connectionFactory(cf: ConnectionFactory): JmsProtocolBuilder = JmsProtocolBuilder(cf, None, DeliveryMode.NON_PERSISTENT, MessageIdMessageMatcher, 1, None)
 }
 
 final case class JmsProtocolBuilder(
     connectionFactory: ConnectionFactory,
-    creds: Option[Credentials] = None,
-    deliveryMode: Int = DeliveryMode.NON_PERSISTENT,
-    messageMatcher: JmsMessageMatcher = MessageIdMessageMatcher,
-    listenerThreadCount: Int = 1,
-    replyTimeout: Option[Long] = None
+    creds: Option[Credentials],
+    deliveryMode: Int,
+    messageMatcher: JmsMessageMatcher,
+    listenerThreadCount: Int,
+    replyTimeout: Option[Long]
 ) {
 
-  def credentials(user: String, password: String) = copy(creds = Some(Credentials(user, password)))
-  def usePersistentDeliveryMode = copy(deliveryMode = DeliveryMode.PERSISTENT)
-  def useNonPersistentDeliveryMode = copy(deliveryMode = DeliveryMode.NON_PERSISTENT)
-  def matchByMessageId = messageMatcher(MessageIdMessageMatcher)
-  def matchByCorrelationId = messageMatcher(CorrelationIdMessageMatcher)
-  def messageMatcher(matcher: JmsMessageMatcher) = copy(messageMatcher = matcher)
+  def credentials(user: String, password: String): JmsProtocolBuilder = copy(creds = Some(Credentials(user, password)))
+  def usePersistentDeliveryMode: JmsProtocolBuilder = copy(deliveryMode = DeliveryMode.PERSISTENT)
+  def useNonPersistentDeliveryMode: JmsProtocolBuilder = copy(deliveryMode = DeliveryMode.NON_PERSISTENT)
+  def matchByMessageId: JmsProtocolBuilder = messageMatcher(MessageIdMessageMatcher)
+  def matchByCorrelationId: JmsProtocolBuilder = messageMatcher(CorrelationIdMessageMatcher)
+  def messageMatcher(matcher: JmsMessageMatcher): JmsProtocolBuilder = copy(messageMatcher = matcher)
   def replyTimeout(timeout: Long): JmsProtocolBuilder = copy(replyTimeout = Some(timeout))
   def listenerThreadCount(threadCount: Int): JmsProtocolBuilder = copy(listenerThreadCount = threadCount)
 
-  def build = JmsProtocol(
+  def build: JmsProtocol = JmsProtocol(
     credentials = creds,
     deliveryMode = deliveryMode,
     messageMatcher = messageMatcher,

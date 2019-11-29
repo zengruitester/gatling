@@ -23,18 +23,20 @@ import io.gatling.http.request.builder.sse.SseConnectRequestBuilder
 object Sse {
   private val DefaultSseName = SessionPrivateAttributes.PrivateAttributePrefix + "http.sse"
 
+  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
+  // binary compat
   def apply(requestName: Expression[String], sseName: String = DefaultSseName): Sse = new Sse(requestName, sseName)
 
-  def checkMessage(name: String) = SseMessageCheck(name, Nil, Nil)
+  def checkMessage(name: String): SseMessageCheck = SseMessageCheck(name, Nil, Nil)
 }
 
 class Sse(requestName: Expression[String], sseName: String) {
 
-  def sseName(sseName: String) = new Sse(requestName, sseName)
+  def sseName(sseName: String): Sse = new Sse(requestName, sseName)
 
-  def connect(url: Expression[String]) = SseConnectRequestBuilder(requestName, url, sseName)
+  def connect(url: Expression[String]): SseConnectRequestBuilder = SseConnectRequestBuilder(requestName, url, sseName)
 
-  def setCheck = SseSetCheckBuilder(requestName, sseName, Nil)
+  def setCheck: SseSetCheckBuilder = SseSetCheckBuilder(requestName, sseName, Nil)
 
-  def close() = SseCloseBuilder(requestName, sseName)
+  def close: SseCloseBuilder = SseCloseBuilder(requestName, sseName)
 }

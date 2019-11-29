@@ -20,13 +20,17 @@ import io.gatling.core.session.Expression
 
 import io.netty.handler.codec.mqtt.MqttQoS
 
-case class LastWillBuilder(
+object LastWillBuilder {
+  def apply(topic: Expression[String], message: Expression[Array[Byte]]): LastWillBuilder =
+    new LastWillBuilder(topic, message, qosOverride = None, retainOverride = None)
+}
+
+final case class LastWillBuilder(
     topic: Expression[String],
     message: Expression[Array[Byte]],
-    qosOverride: Option[MqttQoS] = None,
-    retainOverride: Option[Boolean] = None
+    qosOverride: Option[MqttQoS],
+    retainOverride: Option[Boolean]
 ) {
-
   def qosAtMostOnce: LastWillBuilder = qos(MqttQoS.AT_MOST_ONCE)
   def qosAtLeastOnce: LastWillBuilder = qos(MqttQoS.AT_LEAST_ONCE)
   def qosExactlyOnce: LastWillBuilder = qos(MqttQoS.EXACTLY_ONCE)
@@ -36,4 +40,4 @@ case class LastWillBuilder(
   def build: LastWill = LastWill(topic, message, qosOverride, retainOverride)
 }
 
-case class LastWill(topic: Expression[String], message: Expression[Array[Byte]], qosOverride: Option[MqttQoS], retainOverride: Option[Boolean])
+final case class LastWill(topic: Expression[String], message: Expression[Array[Byte]], qosOverride: Option[MqttQoS], retainOverride: Option[Boolean])

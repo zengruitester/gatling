@@ -19,7 +19,7 @@ package io.gatling.core.controller.throttle
 import scala.annotation.tailrec
 import scala.concurrent.duration._
 
-sealed trait ThrottleStep {
+sealed trait ThrottleStep extends Product with Serializable {
 
   val durationInSec: Long
   def target(previousLastValue: Int): Int
@@ -27,7 +27,7 @@ sealed trait ThrottleStep {
 }
 
 final case class ReachIntermediate(target: Int) {
-  def in(duration: FiniteDuration) = Reach(target, duration)
+  def in(duration: FiniteDuration): ThrottleStep = Reach(target, duration)
 }
 
 final case class Reach(target: Int, duration: FiniteDuration) extends ThrottleStep {
@@ -45,13 +45,13 @@ final case class Hold(duration: FiniteDuration) extends ThrottleStep {
 final case class Jump(target: Int) extends ThrottleStep {
   override val durationInSec: Long = 0L
   override def target(previousLastValue: Int): Int = target
-  override def rps(time: Long, previousLastValue: Int) = 0
+  override def rps(time: Long, previousLastValue: Int): Int = 0
 }
 
 trait ThrottlingSupport {
-  def reachRps(target: Int) = ReachIntermediate(target)
-  def holdFor(duration: FiniteDuration) = Hold(duration)
-  def jumpToRps(target: Int) = Jump(target)
+  def reachRps(target: Int): ReachIntermediate = ReachIntermediate(target)
+  def holdFor(duration: FiniteDuration): ThrottleStep = Hold(duration)
+  def jumpToRps(target: Int): ThrottleStep = Jump(target)
 }
 
 final case class Throttlings(global: Option[Throttling], perScenario: Map[String, Throttling])

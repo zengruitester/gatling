@@ -19,14 +19,14 @@ package io.gatling.recorder.config
 import io.gatling.commons.util.ClassSimpleNameToString
 import io.gatling.recorder.util.Labelled
 
-sealed abstract class RecorderMode(val label: String) extends Labelled with ClassSimpleNameToString
+sealed abstract class RecorderMode(val label: String) extends Labelled with ClassSimpleNameToString with Product with Serializable
 
 object RecorderMode {
 
   case object Proxy extends RecorderMode("HTTP Proxy")
   case object Har extends RecorderMode("HAR Converter")
 
-  val AllModes = List(Proxy, Har)
+  val AllModes: List[RecorderMode] = List(Proxy, Har)
 
   def apply(s: String): RecorderMode =
     AllModes.find(_.toString == s).getOrElse {

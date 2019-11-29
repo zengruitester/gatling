@@ -26,4 +26,17 @@ object Collections {
       sum
     }
   }
+
+  def lift[T](it: Iterator[T], i: Int): Option[T] = {
+    var j = 0
+    var found: Option[T] = None
+    while (it.hasNext && found.isEmpty) {
+      val value = it.next()
+      if (i == j) {
+        found = Some(value)
+      }
+      j += 1
+    }
+    found
+  }
 }

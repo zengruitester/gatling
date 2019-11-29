@@ -29,17 +29,19 @@ import com.fasterxml.jackson.databind.{ JsonNode, ObjectMapper }
 object JsonParsers {
 
   private val JacksonErrorMapper: String => String = "Jackson failed to parse into a valid AST: " + _
-  private val JsonSupportedEncodings = Vector(UTF_8, UTF_16, UTF_32)
+  private val JsonSupportedEncodings = Set(UTF_8, UTF_16, UTF_32)
 
-  def apply()(implicit configuration: GatlingConfiguration) =
+  def apply()(implicit configuration: GatlingConfiguration): JsonParsers =
     new JsonParsers(new ObjectMapper, configuration.core.charset)
 }
 
-class JsonParsers(private[gatling] val objectMapper: ObjectMapper, defaultCharset: Charset) {
+class JsonParsers(objectMapper: ObjectMapper, defaultCharset: Charset) {
 
   import JsonParsers._
 
-  def parse(is: InputStream, charset: Charset = defaultCharset): JsonNode =
+  def parse(is: InputStream): JsonNode = parse(is, defaultCharset)
+
+  private def parse(is: InputStream, charset: Charset): JsonNode =
     if (JsonParsers.JsonSupportedEncodings.contains(charset)) {
       objectMapper.readValue(is, classOf[JsonNode])
     } else {
@@ -47,7 +49,7 @@ class JsonParsers(private[gatling] val objectMapper: ObjectMapper, defaultCharse
       objectMapper.readValue(reader, classOf[JsonNode])
     }
 
-  def safeParse(is: InputStream, charset: Charset = defaultCharset): Validation[JsonNode] =
+  def safeParse(is: InputStream, charset: Charset): Validation[JsonNode] =
     safely(JacksonErrorMapper)(parse(is, charset).success)
 
   def parse(string: String): JsonNode =

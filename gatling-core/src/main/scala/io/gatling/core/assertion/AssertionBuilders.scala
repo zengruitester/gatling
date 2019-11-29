@@ -21,11 +21,11 @@ import io.gatling.core.config.GatlingConfiguration
 
 class AssertionWithPath(path: AssertionPath)(implicit configuration: GatlingConfiguration) {
 
-  def responseTime = new AssertionWithPathAndTimeMetric(path, ResponseTime)
-  def allRequests = new AssertionWithPathAndCountMetric(path, AllRequests)
-  def failedRequests = new AssertionWithPathAndCountMetric(path, FailedRequests)
-  def successfulRequests = new AssertionWithPathAndCountMetric(path, SuccessfulRequests)
-  def requestsPerSec = new AssertionWithPathAndTarget[Int](path, MeanRequestsPerSecondTarget)
+  def responseTime: AssertionWithPathAndTimeMetric = new AssertionWithPathAndTimeMetric(path, ResponseTime)
+  def allRequests: AssertionWithPathAndCountMetric = new AssertionWithPathAndCountMetric(path, AllRequests)
+  def failedRequests: AssertionWithPathAndCountMetric = new AssertionWithPathAndCountMetric(path, FailedRequests)
+  def successfulRequests: AssertionWithPathAndCountMetric = new AssertionWithPathAndCountMetric(path, SuccessfulRequests)
+  def requestsPerSec: AssertionWithPathAndTarget[Int] = new AssertionWithPathAndTarget[Int](path, MeanRequestsPerSecondTarget)
 }
 
 class AssertionWithPathAndTimeMetric(path: AssertionPath, metric: TimeMetric)(implicit configuration: GatlingConfiguration) {
@@ -46,13 +46,13 @@ class AssertionWithPathAndTimeMetric(path: AssertionPath, metric: TimeMetric)(im
 
 class AssertionWithPathAndCountMetric(path: AssertionPath, metric: CountMetric) {
 
-  def count = new AssertionWithPathAndTarget[Long](path, CountTarget(metric))
-  def percent = new AssertionWithPathAndTarget[Double](path, PercentTarget(metric))
+  def count: AssertionWithPathAndTarget[Long] = new AssertionWithPathAndTarget[Long](path, CountTarget(metric))
+  def percent: AssertionWithPathAndTarget[Double] = new AssertionWithPathAndTarget[Double](path, PercentTarget(metric))
 }
 
 class AssertionWithPathAndTarget[T: Numeric](path: AssertionPath, target: Target) {
 
-  def next(condition: Condition) =
+  def next(condition: Condition): Assertion =
     Assertion(path, target, condition)
 
   private val numeric = implicitly[Numeric[T]]
@@ -61,6 +61,8 @@ class AssertionWithPathAndTarget[T: Numeric](path: AssertionPath, target: Target
   def lte(threshold: T): Assertion = next(Lte(numeric.toDouble(threshold)))
   def gt(threshold: T): Assertion = next(Gt(numeric.toDouble(threshold)))
   def gte(threshold: T): Assertion = next(Gte(numeric.toDouble(threshold)))
+  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
+  // binary compat
   def between(min: T, max: T, inclusive: Boolean = true): Assertion = next(Between(numeric.toDouble(min), numeric.toDouble(max), inclusive))
   def is(value: T): Assertion = next(Is(numeric.toDouble(value)))
   def in(set: Set[T]): Assertion = next(In(set.map(numeric.toDouble).toList))

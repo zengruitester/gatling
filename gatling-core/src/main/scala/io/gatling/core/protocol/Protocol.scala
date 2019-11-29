@@ -16,15 +16,18 @@
 
 package io.gatling.core.protocol
 
+import scala.collection.breakOut
 import scala.collection.mutable
 
 import io.gatling.core.CoreComponents
 import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.session.Session
 
-/**
- * This trait is a model to all protocol specific configuration
- */
+object Protocol {
+  def indexByType(protocols: Iterable[Protocol]): Protocols =
+    protocols.map(p => p.getClass.asInstanceOf[Class[Protocol]] -> p)(breakOut)
+}
+
 trait Protocol
 
 trait ProtocolKey[P, C] {
@@ -48,7 +51,7 @@ trait ProtocolComponents {
 
 class ProtocolComponentsRegistries(coreComponents: CoreComponents, globalProtocols: Protocols) {
 
-  val componentsFactoryCache = mutable.Map.empty[ProtocolKey[_, _], Any]
+  private val componentsFactoryCache = mutable.Map.empty[ProtocolKey[_, _], Any]
 
   def scenarioRegistry(scenarioProtocols: Protocols): ProtocolComponentsRegistry =
     new ProtocolComponentsRegistry(
@@ -60,14 +63,14 @@ class ProtocolComponentsRegistries(coreComponents: CoreComponents, globalProtoco
 
 class ProtocolComponentsRegistry(coreComponents: CoreComponents, protocols: Protocols, componentsFactoryCache: mutable.Map[ProtocolKey[_, _], Any]) {
 
-  val protocolCache = mutable.Map.empty[ProtocolKey[_, _], Protocol]
-  val componentsCache = mutable.Map.empty[ProtocolKey[_, _], ProtocolComponents]
+  private val protocolCache = mutable.Map.empty[ProtocolKey[_, _], Protocol]
+  private val componentsCache = mutable.Map.empty[ProtocolKey[_, _], ProtocolComponents]
 
   def components[P, C](key: ProtocolKey[P, C]): C = {
 
-    def componentsFactory = componentsFactoryCache.getOrElseUpdate(key, key.newComponents(coreComponents)).asInstanceOf[P => C]
+    def componentsFactory: P => C = componentsFactoryCache.getOrElseUpdate(key, key.newComponents(coreComponents)).asInstanceOf[P => C]
     def protocol: P =
-      protocolCache.getOrElse(key, protocols.protocols.getOrElse(key.protocolClass, key.defaultProtocolValue(coreComponents.configuration))).asInstanceOf[P]
+      protocolCache.getOrElse(key, protocols.getOrElse(key.protocolClass, key.defaultProtocolValue(coreComponents.configuration))).asInstanceOf[P]
     def comps: C = componentsFactory(protocol)
 
     componentsCache.getOrElseUpdate(key, comps.asInstanceOf[ProtocolComponents]).asInstanceOf[C]

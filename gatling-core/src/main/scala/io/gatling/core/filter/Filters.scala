@@ -22,7 +22,7 @@ import scala.util.{ Failure, Success, Try }
 import com.typesafe.scalalogging.StrictLogging
 
 object Filters {
-  val BrowserNoiseFilters =
+  val BrowserNoiseFilters: Filters =
     Filters(
       BlackList(
         Seq(
@@ -47,19 +47,27 @@ final case class Filters(first: Filter, second: Filter) {
 sealed abstract class Filter(patterns: Seq[String]) extends StrictLogging {
   val regexes: Vector[Regex] = patterns.flatMap { p =>
     Try(p.r) match {
-      case Success(regex) => Some(regex)
+      case Success(regex) => List(regex)
       case Failure(t) =>
         logger.error(s"""Incorrect filter pattern "$p": ${t.getMessage}""")
-        None
+        Nil
     }
   }.toVector
   def accept(url: String): Boolean
 }
 
-final case class WhiteList(patterns: Seq[String] = Nil) extends Filter(patterns) {
+object WhiteList {
+  val Empty: WhiteList = WhiteList(Nil)
+}
+
+final case class WhiteList(patterns: Seq[String]) extends Filter(patterns) {
   def accept(url: String): Boolean = regexes.isEmpty || regexes.exists(_.pattern.matcher(url).matches)
 }
 
-final case class BlackList(patterns: Seq[String] = Nil) extends Filter(patterns) {
+object BlackList {
+  val Empty: BlackList = BlackList(Nil)
+}
+
+final case class BlackList(patterns: Seq[String]) extends Filter(patterns) {
   def accept(url: String): Boolean = regexes.forall(!_.pattern.matcher(url).matches)
 }

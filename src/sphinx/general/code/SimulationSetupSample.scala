@@ -20,8 +20,8 @@ import io.gatling.http.Predef._
 
 class SimulationSetupSample extends Simulation {
 
-  val httpProtocol = http
-  val scn = scenario("scenario")
+  private val httpProtocol = http
+  private val scn = scenario("scenario")
 
   //#open-injection
   setUp(
@@ -94,4 +94,22 @@ class SimulationSetupSample extends Simulation {
   )
   //#incrementUsersPerSec
 
+  private val parent = scenario("parent")
+  private val child1 = scenario("child1")
+  private val child2 = scenario("child2")
+  private val grandChild = scenario("grandChild")
+  private val injectionProfile = constantConcurrentUsers(5) during(5)
+
+  //#followedBy
+  setUp(
+    parent.inject(injectionProfile)
+      // child1 and child2 will start at the same time when last parent user will terminate
+      .followedBy(
+        child1.inject(injectionProfile)
+          // grandChild will start when last child1 user will terminate
+          .followedBy(grandChild.inject(injectionProfile)),
+        child2.inject(injectionProfile)
+      )
+  )
+  //#followedBy
 }

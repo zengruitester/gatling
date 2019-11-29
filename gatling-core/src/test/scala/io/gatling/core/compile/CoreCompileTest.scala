@@ -121,7 +121,7 @@ class CoreCompileTest extends Simulation {
       // What will be repeated ?
       // First request to be repeated
       exec { session =>
-        println("iterate: " + session("counter"))
+        println(s"iterate: ${session("counter").as[Int]}")
         session
       }.exec(noop)
         .during(12000 milliseconds, "foo") {
@@ -129,12 +129,12 @@ class CoreCompileTest extends Simulation {
             .pause(2, constantPauses)
             .repeat(2, "tutu") {
               exec { session =>
-                println("--nested loop: " + session("tutu"))
+                println(s"--nested loop: ${session("tutu").as[Int]}")
                 session
               }
             }
             .exec { session =>
-              println("-loopDuring: " + session("foo"))
+              println(s"-loopDuring: ${session("foo").as[Int]}")
               session
             }
             .exec(noop)
@@ -145,12 +145,12 @@ class CoreCompileTest extends Simulation {
           exec(noop)
             .pause(2)
             .exec { session =>
-              println("-iterate1: " + session("counter") + ", doFor: " + session("duringCount"))
+              println(s"-iterate1: ${session("counter").as[Int]}, doFor: ${session("duringCount").as[Int]}")
               session
             }
             .repeat(2, "count") {
               exec { session =>
-                println("--iterate1: " + session("counter") + ", doFor: " + session("duringCount") + ", iterate2: " + session("count"))
+                println(s"--iterate1: ${session("counter").as[Int]}, doFor: ${session("duringCount").as[Int]}, iterate2: ${session("count").as[Int]}")
                 session
               }
             }
@@ -224,7 +224,8 @@ class CoreCompileTest extends Simulation {
     lambdaUser.inject(openSeq),
     lambdaUser.inject(closedSeq),
     lambdaUser.inject(openMeta, inject1),
-    lambdaUser.inject(closedMeta, closedInject1)
+    lambdaUser.inject(closedMeta, closedInject1),
+    lambdaUser.inject(inject1).followedBy(lambdaUser.inject(inject2))
   ).protocols(protocol)
     .pauses(uniformPausesPlusOrMinusPercentage(1))
     .disablePauses

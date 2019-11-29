@@ -42,10 +42,15 @@ trait BatchableFeederBuilder[T] extends FileBasedFeederBuilder[T] {
   def batch(bufferSize: Int): BatchableFeederBuilder[T]
 }
 
+object SourceFeederBuilder {
+  def apply[T](source: FeederSource[T], configuration: GatlingConfiguration): SourceFeederBuilder[T] =
+    new SourceFeederBuilder(source, configuration, FeederOptions.default)
+}
+
 final case class SourceFeederBuilder[T](
     source: FeederSource[T],
     configuration: GatlingConfiguration,
-    options: FeederOptions[T] = FeederOptions[T]()
+    options: FeederOptions[T]
 ) extends BatchableFeederBuilder[T] {
 
   override type F = BatchableFeederBuilder[T]
@@ -79,15 +84,19 @@ final case class SourceFeederBuilder[T](
 private[feeder] trait FeederLoadingMode
 private[feeder] case object Eager extends FeederLoadingMode
 private[feeder] object Batch {
-  val DefaultBufferSize = 2000
+  val DefaultBufferSize: Int = 2000
 }
 private[feeder] final case class Batch(bufferSize: Int) extends FeederLoadingMode
 private[feeder] case object Adaptive extends FeederLoadingMode
 
+object FeederOptions {
+  def default[T]: FeederOptions[T] = new FeederOptions[T](shard = false, unzip = false, conversion = None, strategy = Queue, loadingMode = Adaptive)
+}
+
 final case class FeederOptions[T](
-    shard: Boolean = false,
-    unzip: Boolean = false,
-    conversion: Option[Record[T] => Record[Any]] = None,
-    strategy: FeederStrategy = Queue,
-    loadingMode: FeederLoadingMode = Adaptive
+    shard: Boolean,
+    unzip: Boolean,
+    conversion: Option[Record[T] => Record[Any]],
+    strategy: FeederStrategy,
+    loadingMode: FeederLoadingMode
 )

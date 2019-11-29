@@ -24,10 +24,10 @@ import io.gatling.core.session.{ el, Session }
 
 class ElSpec extends BaseSpec with ValidationValues {
 
-  implicit val configuration = GatlingConfiguration.loadForTest()
+  private implicit val configuration: GatlingConfiguration = GatlingConfiguration.loadForTest()
 
-  def newSession(contents: Map[String, Any]) =
-    Session("scenario", 0, System.currentTimeMillis(), contents)
+  private def newSession(attributes: Map[String, Any]) =
+    Session("scenario", 0, System.currentTimeMillis()).copy(attributes = attributes)
 
   "Static String" should "return itself" in {
     val session = newSession(Map.empty)

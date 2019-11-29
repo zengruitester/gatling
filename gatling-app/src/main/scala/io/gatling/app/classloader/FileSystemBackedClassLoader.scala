@@ -45,7 +45,7 @@ private[classloader] class FileSystemBackedClassLoader(root: Path, parent: Class
     findPath(name).map { path =>
       new URL(
         null,
-        "repldir:" + path,
+        "repldir:" + path.toString,
         (url: URL) =>
           new URLConnection(url) {
             override def connect(): Unit = ()
@@ -130,5 +130,5 @@ private[classloader] class FileSystemBackedClassLoader(root: Path, parent: Class
   }
 
   override def getPackages: Array[Package] =
-    root.deepDirs().map(path => getPackage(path.toString)).toArray
+    root.deepDirs(_ => true).map(path => getPackage(path.toString)).toArray
 }

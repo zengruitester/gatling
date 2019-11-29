@@ -28,27 +28,29 @@ import com.typesafe.scalalogging.StrictLogging
 
 case object JmsJndiConnectionFactoryBuilderBase {
 
-  def connectionFactoryName(cfn: String) = JmsJndiConnectionFactoryBuilderUrlStep(cfn)
+  def connectionFactoryName(cfn: String): JmsJndiConnectionFactoryBuilderUrlStep = JmsJndiConnectionFactoryBuilderUrlStep(cfn)
 }
 
 final case class JmsJndiConnectionFactoryBuilderUrlStep(connectionFactoryName: String) {
 
-  def url(theUrl: String) =
-    JmsJndiConnectionFactoryBuilderFactoryStep(connectionFactoryName, theUrl)
+  def url(theUrl: String): JmsJndiConnectionFactoryBuilderFactoryStep =
+    JmsJndiConnectionFactoryBuilderFactoryStep(connectionFactoryName, theUrl, None, Map.empty)
 }
 
 final case class JmsJndiConnectionFactoryBuilderFactoryStep(
     connectionFactoryName: String,
     url: String,
-    credentials: Option[Credentials] = None,
-    properties: Map[String, String] = Map.empty
+    credentials: Option[Credentials],
+    properties: Map[String, String]
 ) {
 
-  def credentials(user: String, password: String) = copy(credentials = Some(Credentials(user, password)))
+  def credentials(user: String, password: String): JmsJndiConnectionFactoryBuilderFactoryStep =
+    copy(credentials = Some(Credentials(user, password)))
 
-  def property(key: String, value: String) = copy(properties = properties.updated(key, value))
+  def property(key: String, value: String): JmsJndiConnectionFactoryBuilderFactoryStep =
+    copy(properties = properties.updated(key, value))
 
-  def contextFactory(cf: String) =
+  def contextFactory(cf: String): JmsJndiConnectionFactoryBuilder =
     JmsJndiConnectionFactoryBuilder(cf, connectionFactoryName, url, credentials, properties)
 }
 

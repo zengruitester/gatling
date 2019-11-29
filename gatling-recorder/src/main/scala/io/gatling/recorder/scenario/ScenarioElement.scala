@@ -38,21 +38,23 @@ import jodd.net.MimeTypes
 
 private[recorder] final case class TimedScenarioElement[+T <: ScenarioElement](sendTime: Long, arrivalTime: Long, element: T)
 
-private[recorder] sealed trait RequestBody
+private[recorder] sealed trait RequestBody extends Product with Serializable
 private[recorder] final case class RequestBodyParams(params: List[(String, String)]) extends RequestBody
+@SuppressWarnings(Array("org.wartremover.warts.ArrayEquals"))
 private[recorder] final case class RequestBodyBytes(bytes: Array[Byte]) extends RequestBody
 
-private[recorder] sealed trait ResponseBody
+private[recorder] sealed trait ResponseBody extends Product with Serializable
+@SuppressWarnings(Array("org.wartremover.warts.ArrayEquals"))
 private[recorder] final case class ResponseBodyBytes(bytes: Array[Byte]) extends ResponseBody
 
-private[recorder] sealed trait ScenarioElement
+private[recorder] sealed trait ScenarioElement extends Product with Serializable
 
 private[recorder] final case class PauseElement(duration: FiniteDuration) extends ScenarioElement
 private[recorder] final case class TagElement(text: String) extends ScenarioElement
 
 private[recorder] object RequestElement {
 
-  val CacheHeaders = Set(CacheControl, IfMatch, IfModifiedSince, IfNoneMatch, IfRange, IfUnmodifiedSince)
+  private val CacheHeaders = Set(CacheControl, IfMatch, IfModifiedSince, IfNoneMatch, IfRange, IfUnmodifiedSince)
 
   private val HtmlContentType = """(?i)text/html\s*;\s+charset=(.+)?""".r
 
@@ -101,7 +103,7 @@ private[recorder] object RequestElement {
         requestHeaders
       }
 
-    RequestElement(request.uri, request.method, filteredRequestHeaders, requestBody, response.headers, responseBody, response.status, embeddedResources)
+    RequestElement(request.uri, request.method, filteredRequestHeaders, requestBody, response.headers, responseBody, response.status, embeddedResources, Nil)
   }
 }
 
@@ -114,7 +116,7 @@ private[recorder] final case class RequestElement(
     responseBody: Option[ResponseBody],
     statusCode: Int,
     embeddedResources: List[ConcurrentResource],
-    nonEmbeddedResources: List[RequestElement] = Nil
+    nonEmbeddedResources: List[RequestElement]
 ) extends ScenarioElement {
 
   val (baseUrl, pathQuery) = {
@@ -122,8 +124,8 @@ private[recorder] final case class RequestElement(
 
     val base = new StringBuilder().append(uriComponents.getScheme).append("://").append(uriComponents.getHost)
     val port = uriComponents.getScheme match {
-      case "http" if !Set(-1, 80).contains(uriComponents.getPort)   => ":" + uriComponents.getPort
-      case "https" if !Set(-1, 443).contains(uriComponents.getPort) => ":" + uriComponents.getPort
+      case "http" if !Set(-1, 80).contains(uriComponents.getPort)   => s":${uriComponents.getPort}"
+      case "https" if !Set(-1, 443).contains(uriComponents.getPort) => s":${uriComponents.getPort}"
       case _                                                        => ""
     }
     base.append(port)
