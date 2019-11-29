@@ -86,14 +86,14 @@ private[charts] class StatisticsTextComponent(implicit configuration: GatlingCon
                                         <thead>
                                             <tr>
                                                 <th></th>
-                                                <th>Total</th>
-                                                <th>OK</th>
-                                                <th>KO</th>
+                                                <th>合计</th>
+                                                <th>成功</th>
+                                                <th>失败</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td class="title">Min</td>
+                                                <td class="title">最小响应时间</td>
                                                 <td id="minResponseTime" class="total"></td>
                                                 <td id="minResponseTimeOK" class="ok"></td>
                                                 <td id="minResponseTimeKO" class="ko"></td>
@@ -123,19 +123,19 @@ private[charts] class StatisticsTextComponent(implicit configuration: GatlingCon
                                                 <td id="percentiles4KO" class="ko"></td>
                                             </tr>
                                             <tr>
-                                                <td class="title">Max</td>
+                                                <td class="title">最大响应时间</td>
                                                 <td id="maxResponseTime" class="total"></td>
                                                 <td id="maxResponseTimeOK" class="ok"></td>
                                                 <td id="maxResponseTimeKO" class="ko"></td>
                                             </tr>
                                             <tr>
-                                                <td class="title">Mean</td>
+                                                <td class="title">平均响应时间</td>
                                                 <td id="meanResponseTime" class="total"></td>
                                                 <td id="meanResponseTimeOK" class="ok"></td>
                                                 <td id="meanResponseTimeKO" class="ko"></td>
                                             </tr>
                                             <tr>
-                                                <td class="title">Std Deviation</td>
+                                                <td class="title">接口波动率</td>
                                                 <td id="standardDeviation" class="total"></td>
                                                 <td id="standardDeviationOK" class="ok"></td>
                                                 <td id="standardDeviationKO" class="ko"></td>

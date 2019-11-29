@@ -32,14 +32,14 @@ private[charts] class ErrorsTableComponent(errors: Seq[ErrorStats]) extends Comp
     else
       s"""<div class="statistics extensible-geant collapsed">
     <div class="title">
-        <div class="title_collapsed" style="cursor: auto;">ERRORS</div>
+        <div class="title_collapsed" style="cursor: auto;">错误信息</div>
     </div>
     <table id="container_errors" class="statistics-in extensible-geant">
         <thead>
             <tr>
-                <th id="error-col-1" class="header sortable"><span>Error</span></th>
-                <th id="error-col-2" class="header sortable"><span>Count</span></th>
-                <th id="error-col-3" class="header sortable"><span>Percentage</span></th>
+                <th id="error-col-1" class="header sortable"><span>错误</span></th>
+                <th id="error-col-2" class="header sortable"><span>数量</span></th>
+                <th id="error-col-3" class="header sortable"><span>百分比</span></th>
             </tr>
         </thead>
 		<tbody>

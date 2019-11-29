@@ -46,7 +46,8 @@ private[charts] class RequestDetailsReportGenerator(reportsGenerationInputs: Rep
         percentilesChartComponent(
           logFileReader.responseTimePercentilesOverTime,
           componentLibrary.getRequestDetailsResponseTimeChartComponent,
-          "Response Time Percentiles over Time"
+//          "Response Time Percentiles over Time"
+          "响应时间变化图"
         )
 
       def percentilesChartComponent(

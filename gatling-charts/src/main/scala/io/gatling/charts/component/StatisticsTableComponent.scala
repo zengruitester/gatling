@@ -42,7 +42,7 @@ private[charts] class StatisticsTableComponent(implicit configuration: GatlingCo
                         <div class="statistics extensible-geant collapsed">
                             <div class="title">
                                 <div class="right">
-                                    <span class="expand-all-button">Expand all groups</span> | <span class="collapse-all-button">Collapse all groups</span>
+                                    <span class="expand-all-button">展开所有信息</span> | <span class="collapse-all-button">收回所有信息</span>
                                 </div>
                                 <div id="statistics_title" class="title_collapsed">STATISTICS <span>(Click here to show more)</span></div>
                             </div>
@@ -54,10 +54,10 @@ private[charts] class StatisticsTableComponent(implicit configuration: GatlingCo
                                         <th colspan="${responseTimeFields.size}" class="header"><span class="response-time">Response Time (ms)</span></th>
                                     </tr>
                                     <tr>
-                                        <th id="col-2" class="header sortable"><span>Total</span></th>
-                                        <th id="col-3" class="header sortable"><span>OK</span></th>
-                                        <th id="col-4" class="header sortable"><span>KO</span></th>
-                                        <th id="col-5" class="header sortable"><span>% KO</span></th>
+                                        <th id="col-2" class="header sortable"><span>合计</span></th>
+                                        <th id="col-3" class="header sortable"><span>成功</span></th>
+                                        <th id="col-4" class="header sortable"><span>失败</span></th>
+                                        <th id="col-5" class="header sortable"><span>错误率(%)</span></th>
                                         <th id="col-6" class="header sortable"><span>Cnt/s</span></th>
                                         ${responseTimeFields.zipWithIndex
       .map { case (header, i) => s"""<th id="col-${i + 7}" class="header sortable"><span>$header</span></th>""" }
