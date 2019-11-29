@@ -41,6 +41,7 @@ public class Request {
   private final Realm realm;
   private final ProxyServer proxyServer;
   private final SignatureCalculator signatureCalculator;
+  private final SignatureCalculatorToQuery signatureCalculatortoQuery;
   private final NameResolver<InetAddress> nameResolver;
   private final boolean http2Enabled;
   private final boolean alpnRequired;
@@ -58,6 +59,7 @@ public class Request {
                  Realm realm,
                  ProxyServer proxyServer,
                  SignatureCalculator signatureCalculator,
+				 SignatureCalculatorToQuery signatureCalculatortoQuery,
                  NameResolver<InetAddress> nameResolver,
                  boolean http2Enabled,
                  boolean alpnRequired,
@@ -74,12 +76,47 @@ public class Request {
     this.realm = realm;
     this.proxyServer = proxyServer;
     this.signatureCalculator = signatureCalculator;
+    this.signatureCalculatortoQuery =   signatureCalculatortoQuery;
     this.nameResolver = nameResolver;
     this.http2Enabled = http2Enabled;
     this.alpnRequired = alpnRequired;
     this.http2PriorKnowledge = http2PriorKnowledge;
     this.wsSubprotocol = wsSubprotocol;
   }
+	public Request(HttpMethod method,
+				   Uri uri,
+				   HttpHeaders headers,
+				   List<Cookie> cookies,
+				   RequestBody<?> body,
+				   long requestTimeout,
+				   String virtualHost,
+				   InetAddress localAddress,
+				   Realm realm,
+				   ProxyServer proxyServer,
+				   SignatureCalculator signatureCalculator,
+				   NameResolver<InetAddress> nameResolver,
+				   boolean http2Enabled,
+				   boolean alpnRequired,
+				   boolean http2PriorKnowledge,
+				   String wsSubprotocol) {
+		this.method = method;
+		this.uri = uri;
+		this.headers = headers;
+		this.cookies = cookies;
+		this.body = body;
+		this.requestTimeout = requestTimeout;
+		this.virtualHost = virtualHost;
+		this.localAddress = localAddress;
+		this.realm = realm;
+		this.proxyServer = proxyServer;
+		this.signatureCalculator = signatureCalculator;
+		this.signatureCalculatortoQuery =   null;
+		this.nameResolver = nameResolver;
+		this.http2Enabled = http2Enabled;
+		this.alpnRequired = alpnRequired;
+		this.http2PriorKnowledge = http2PriorKnowledge;
+		this.wsSubprotocol = wsSubprotocol;
+	}
 
   public Request copyWithAlpnRequiredAndPriorKnowledge(boolean isAlpnRequired, boolean isHttp2PriorKnowledge) {
     return new Request(
@@ -94,6 +131,7 @@ public class Request {
       this.realm,
       this.proxyServer,
       this.signatureCalculator,
+      this.signatureCalculatortoQuery,
       this.nameResolver,
       this.http2Enabled,
       isAlpnRequired,
@@ -121,6 +159,7 @@ public class Request {
             this.realm,
             this.proxyServer,
             this.signatureCalculator,
+            this.signatureCalculatortoQuery,
             this.nameResolver,
             this.http2Enabled,
             this.alpnRequired,
@@ -163,7 +202,9 @@ public class Request {
   public SignatureCalculator getSignatureCalculator() {
     return signatureCalculator;
   }
-
+	public SignatureCalculatorToQuery getSignatureCalculatortoQuery() {
+		return signatureCalculatortoQuery;
+	}
   public NameResolver<InetAddress> getNameResolver() {
     return nameResolver;
   }

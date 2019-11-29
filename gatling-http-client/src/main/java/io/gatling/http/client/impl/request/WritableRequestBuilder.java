@@ -16,10 +16,7 @@
 
 package io.gatling.http.client.impl.request;
 
-import io.gatling.http.client.HttpClientConfig;
-import io.gatling.http.client.Request;
-import io.gatling.http.client.RequestBuilder;
-import io.gatling.http.client.SignatureCalculator;
+import io.gatling.http.client.*;
 import io.gatling.http.client.body.RequestBody;
 import io.gatling.http.client.body.WritableContent;
 import io.gatling.http.client.proxy.HttpProxyServer;
@@ -30,6 +27,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 
 import java.io.IOException;
+import java.util.List;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static io.netty.handler.codec.http.HttpMethod.*;
@@ -107,7 +105,11 @@ public class WritableRequestBuilder {
     Uri uri = request.getUri();
     HttpHeaders headers = request.getHeaders();
     RequestBody<?> requestBody = request.getBody();
+    SignatureCalculatorToQuery signatureCalculatorToQuery = request.getSignatureCalculatortoQuery();
+    if(signatureCalculatorToQuery!=null){
+      List<Param> params = request.getUri().getEncodedQueryParams();
 
+    }
     String url = http2 || (!uri.isSecured() && request.getProxyServer() instanceof HttpProxyServer) ?
             uri.toUrl() : // HTTP proxy with clear HTTP uses absolute url
             uri.toRelativeUrl();

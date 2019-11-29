@@ -230,8 +230,9 @@ final class UriParser {
     if (colonPosition >= 0) {
       // see RFC2396: port can be null
       int portPosition = colonPosition + 1;
-      if (host.length() > portPosition)
+      if (host.length() > portPosition) {
         port = Integer.parseInt(host.substring(portPosition));
+      }
       host = host.substring(0, colonPosition);
     }
   }
